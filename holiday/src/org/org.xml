@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="holiday_package_organization"
+    os-version="0.8"
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd'>
+
+<structural-specification>
+
+    <role-definitions>
+        <role id="tour_operator_agent" />
+        <role id="consumer_agent" />
+        <role id="services_company_agent" />
+        <role id="accommodation_sca"> <extends role="services_company_agent"/> </role>
+        <role id="restauration_sca">  <extends role="services_company_agent"/> </role>
+        <role id="tour_sca">          <extends role="services_company_agent"/> </role>
+        <role id="transport_sca">     <extends role="services_company_agent"/> </role>
+    </role-definitions>
+
+    <group-specification id="holiday_package_group">
+        <roles>
+            <role id="tour_operator_agent" min="1" max="3"/>
+            <role id="consumer_agent" min="1" max="3"/>
+            <role id="accommodation_sca" min="0" max="3"/>
+            <role id="restauration_sca" min="0" max="3"/>
+            <role id="tour_sca" min="0" max="3"/>
+            <role id="transport_sca" min="0" max="3"/>
+        </roles>
+
+        <links>
+            <link from="tour_operator_agent" type="authority" to="services_company_agent" scope="intra-group" />
+            <link from="consumer_agent" type="communication" to="tour_operator_agent" scope="intra-group" />
+            <link from="services_company_agent" type="communication" to="tour_operator_agent" scope="intra-group" />
+        </links>
+    </group-specification>
+
+</structural-specification>
+
+<functional-specification>
+    <scheme id="holiday_package_scheme">
+        <goal id="holiday_package_successfully_booked">
+            <plan operator="sequence">
+                <goal id="contracting_phase_completed" ttf="30 minutes"/>
+                <goal id="purchasing_phase_completed" ttf="20 minutes"/>
+                <goal id="delivering_phase_completed" ttf="20 minutes"/>
+            </plan>
+        </goal>
+
+        <mission id="manage_contracting" min="1" max="12">
+            <goal id="contracting_phase_completed"/>
+        </mission>
+        <mission id="manage_purchasing" min="1" max="12">
+            <goal id="purchasing_phase_completed" />
+        </mission>
+        <mission id="manage_delivering" min="1" max="12">
+            <goal id="delivering_phase_completed" />
+        </mission>
+    </scheme>
+</functional-specification>
+
+<normative-specification>
+    <norm id="n1" type="obligation" role="tour_operator_agent" mission="manage_contracting" time-constraint="within 3 days" />
+    <norm id="n2" type="obligation" role="consumer_agent" mission="manage_purchasing" time-constraint="within 2 days" />
+    <norm id="n3" type="obligation" role="services_company_agent" mission="manage_delivering" time-constraint="as per contract" />
+</normative-specification>
+
+</organisational-specification>
